@@ -1,0 +1,2 @@
+LogMessage$MessageType
+LogMessage
