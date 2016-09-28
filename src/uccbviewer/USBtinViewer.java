@@ -38,7 +38,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static java.awt.Toolkit.getDefaultToolkit;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import static java.lang.System.getProperty;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +54,7 @@ import java.util.logging.Logger;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "0.1";
+    protected final String version = "1.1";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -257,7 +261,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jSeparator1 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         sendFilters = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        logToFile = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("UCCBViewer");
@@ -417,8 +421,6 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addGap(21, 21, 21))
         );
 
-        jLabel1.setText("Filters are in ");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -426,9 +428,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(filtersEnabled)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(184, 184, 184))
+                .addGap(184, 464, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -440,19 +440,25 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(filtersEnabled)
-                    .addComponent(jLabel1))
+                .addComponent(filtersEnabled)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         filterScrollPane.setViewportView(jPanel1);
 
         mainTabbedPane.addTab("Filter", filterScrollPane);
+
+        logToFile.setText("LogToFile");
+        logToFile.setToolTipText("Log frames to file placed in running directory, file name is timestamp.");
+        logToFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logToFileActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -501,7 +507,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                                 .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(connectionButton)
-                                .addGap(112, 112, 112)
+                                .addGap(33, 33, 33)
+                                .addComponent(logToFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(clearButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(followButton)))
@@ -518,7 +526,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(connectionButton)
                     .addComponent(followButton)
-                    .addComponent(clearButton))
+                    .addComponent(clearButton)
+                    .addComponent(logToFile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
@@ -575,7 +584,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 serialPort.setEnabled(false);
                 sendButton.setEnabled(true);
                 openmodeComboBox.setEnabled(false);
-                log("Connected to USBtin (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
+                log("Connected to Device (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
 
                 if (baseTimestamp == 0) {
                     baseTimestamp = System.currentTimeMillis();
@@ -652,6 +661,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
      * 
      * @throws USBtinException On serial port errors
      */
+    
     private void sendFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendFiltersActionPerformed
             
             int fs = 0;
@@ -659,12 +669,23 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
              {
                 if (filterCheckBoxs[i].isSelected())
                 {
-                    int filter = (int)Long.parseUnsignedLong(filterTextFields[i].getText(), 16);
+                    int filter = (int)Long.parseLong(filterTextFields[i].getText(), 16);
                     try {
                         fs ++;
-                        usbtin.writeFilter(new uCCBlib.FilterChain(i,i,1,1,1,0,filter,0,0,filter,0,0));                    
+                        Thread.sleep(50);
+                        usbtin.writeFilter(new uCCBlib.FilterChain(i,i,1,1,1,0,filter,0,0,filter,0,0));   
+                        
+                        if (filelogging == true) 
+                        {
+                            fileLog.println(String.valueOf(System.currentTimeMillis()) + ": F " + filterTextFields[i].getText());
+                        }
+                        
                     } catch (USBtinException ex) {
                         Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
+                        log(ex.getMessage(), LogMessage.MessageType.ERROR);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
+                        log(ex.getMessage(), LogMessage.MessageType.ERROR);
                     }
                 }
              }
@@ -696,6 +717,32 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     log(new LogMessage(null, "Filtering disabled", LogMessage.MessageType.INFO, System.currentTimeMillis() - baseTimestamp));
                 }          
     }//GEN-LAST:event_filtersEnabledItemStateChanged
+
+    PrintWriter fileLog = null;
+    boolean filelogging = false;
+    private void logToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logToFileActionPerformed
+        if (filelogging == true)
+        {
+            fileLog.close();
+            filelogging = false;
+            logToFile.setText("LogToFile");
+        } else 
+        {          
+            try {
+                fileLog = new PrintWriter(String.valueOf(System.currentTimeMillis()+".log"), "UTF-8");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
+            filelogging = true;
+            logToFile.setText("StopLogging");
+            fileLog.println("-----Log Start "+new Date().toString()+"-----");
+        }
+        
+    }//GEN-LAST:event_logToFileActionPerformed
 
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
@@ -772,12 +819,12 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JScrollPane filterScrollPane;
     private javax.swing.JCheckBox filtersEnabled;
     private javax.swing.JToggleButton followButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTable logTable;
+    private javax.swing.JButton logToFile;
     private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JScrollPane monitorScrollPane;
     private javax.swing.JTable monitorTable;
@@ -808,6 +855,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     @Override
     public void receiveCANMessage(CANMessage canmsg) {
         log(new LogMessage(canmsg, null, LogMessage.MessageType.IN, System.currentTimeMillis() - baseTimestamp));
+        if (filelogging == true) 
+        {
+            fileLog.println(String.valueOf(System.currentTimeMillis()) + ": R " + canmsg.toString());
+        }
     }
 
     /**
@@ -849,6 +900,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
      */
     public void send() {
         send(new CANMessage(sendMessage.getText()));
+        if (filelogging == true) 
+        {
+            fileLog.println(String.valueOf(System.currentTimeMillis()) + ": T " + sendMessage.getText());
+        }
     }
 
     /**
