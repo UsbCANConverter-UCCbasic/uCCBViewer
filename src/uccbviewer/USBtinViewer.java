@@ -38,13 +38,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static java.awt.Toolkit.getDefaultToolkit;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import static java.lang.System.getProperty;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 /**
  * Main window frame for USBtinViewer
@@ -54,7 +58,7 @@ import java.util.logging.Logger;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "1.1";
+    protected final String version = "1.2";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -71,8 +75,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     /**
      * Creates new form and initialize it
      */
-    public USBtinViewer() {
-        
+    public USBtinViewer() {        
         // init view components
         initComponents();
         
@@ -262,6 +265,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jPanel2 = new javax.swing.JPanel();
         sendFilters = new javax.swing.JButton();
         logToFile = new javax.swing.JButton();
+        cbRepeat = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        msRepeatTime = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("UCCBViewer");
@@ -269,6 +275,15 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         serialPort.setEditable(true);
         serialPort.setModel(new javax.swing.DefaultComboBoxModel(SerialPortList.getPortNames()));
         serialPort.setToolTipText("Port");
+        serialPort.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                serialPortPopupMenuWillBecomeVisible(evt);
+            }
+        });
 
         bitRate.setEditable(true);
         bitRate.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10000", "20000", "50000", "100000", "125000", "250000", "500000", "800000", "1000000" }));
@@ -301,6 +316,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         openmodeComboBox.setModel(new DefaultComboBoxModel(USBtin.OpenMode.values()));
         openmodeComboBox.setToolTipText("Mode");
+        openmodeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openmodeComboBoxActionPerformed(evt);
+            }
+        });
 
         clearButton.setText("Clear");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
@@ -426,14 +446,15 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(filtersEnabled)
-                .addGap(184, 464, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(filtersEnabled))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -459,6 +480,13 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 logToFileActionPerformed(evt);
             }
         });
+
+        cbRepeat.setText("Repeat");
+
+        jLabel1.setText("ms");
+
+        msRepeatTime.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        msRepeatTime.setText("1000");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -489,31 +517,39 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                                 .addComponent(msgData6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(msgData7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(sendMessage))
-                        .addGap(38, 38, 38)
-                        .addComponent(msgExt)
-                        .addGap(18, 18, 18)
-                        .addComponent(msgRTR)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(sendMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbRepeat)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(msgExt, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(msRepeatTime)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(msgRTR, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(connectionButton)
-                                .addGap(33, 33, 33)
+                                .addComponent(connectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(logToFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(clearButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(followButton)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 42, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -547,7 +583,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sendMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendButton))
+                    .addComponent(sendButton)
+                    .addComponent(jLabel1)
+                    .addComponent(msRepeatTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbRepeat))
                 .addContainerGap())
         );
 
@@ -574,6 +613,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             bitRate.setEnabled(true);
             serialPort.setEnabled(true);
             sendButton.setEnabled(false);
+            
+            sendTimer.stop();
+            sendButton.setText("Send");
+            sendingIsActive = false;
+            
             openmodeComboBox.setEnabled(true);
         } else {
             try {
@@ -595,27 +639,70 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         }
     }//GEN-LAST:event_connectionButtonActionPerformed
 
+    
+     
+
+    ActionListener taskPerformer = new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+            send();
+        }
+    };
+     
+    
     /**
      * Handle send button event
      * 
      * @param evt Action event
      */
+    boolean sendingIsActive = false;
+    Timer sendTimer = new Timer(1000, taskPerformer);
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-        send();
-    }//GEN-LAST:event_sendButtonActionPerformed
+        if (cbRepeat.isSelected())
+        {
+            if (sendingIsActive == false)
+            {
+                try
+                {
+                    int interval = Integer.parseInt(msRepeatTime.getText());
+                    sendTimer.setDelay(interval);
+    //                sendTimer.setRepeats(false);
+                    sendTimer.start();
+                    sendButton.setText("Stop");
+                    sendingIsActive = true;
 
+                } catch (NumberFormatException e)
+                {
+                    sendTimer.stop();
+                    sendButton.setText("Send");
+                }
+            } else 
+            {
+                sendingIsActive = false;
+                sendTimer.stop();
+                sendButton.setText("Send");
+            }
+        } else 
+        {
+            send();
+        }
+    }//GEN-LAST:event_sendButtonActionPerformed
+    void ClearLogMessageTable(boolean resetTimestamp)
+    {
+        LogMessageTableModel tm = (LogMessageTableModel) logTable.getModel();
+        tm.clear();
+        if (resetTimestamp)
+            baseTimestamp = System.currentTimeMillis();
+        
+        MonitorMessageTableModel mtm = (MonitorMessageTableModel) monitorTable.getModel();
+        mtm.clear();
+    }
     /**
      * Handle clear button event
      * 
      * @param evt Action event
      */
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
-        LogMessageTableModel tm = (LogMessageTableModel) logTable.getModel();
-        tm.clear();
-        baseTimestamp = System.currentTimeMillis();
-        
-        MonitorMessageTableModel mtm = (MonitorMessageTableModel) monitorTable.getModel();
-        mtm.clear();
+        ClearLogMessageTable(true);
     }//GEN-LAST:event_clearButtonActionPerformed
 
     /**
@@ -652,7 +739,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
      */
     private void sendMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMessageActionPerformed
         if (sendButton.isEnabled()) {
-            send();
+            if (sendingIsActive == true)
+                send();
         }
     }//GEN-LAST:event_sendMessageActionPerformed
     
@@ -744,6 +832,15 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         
     }//GEN-LAST:event_logToFileActionPerformed
 
+    private void serialPortPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_serialPortPopupMenuWillBecomeVisible
+      serialPort.setModel(new javax.swing.DefaultComboBoxModel(SerialPortList.getPortNames()));
+        // TODO add your handling code here:
+    }//GEN-LAST:event_serialPortPopupMenuWillBecomeVisible
+
+    private void openmodeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openmodeComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_openmodeComboBoxActionPerformed
+
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
     void CreateFiltersArray(JPanel p, int n)
@@ -814,11 +911,13 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox bitRate;
+    private javax.swing.JCheckBox cbRepeat;
     private javax.swing.JButton clearButton;
     private javax.swing.JButton connectionButton;
     private javax.swing.JScrollPane filterScrollPane;
     private javax.swing.JCheckBox filtersEnabled;
     private javax.swing.JToggleButton followButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
@@ -828,6 +927,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JScrollPane monitorScrollPane;
     private javax.swing.JTable monitorTable;
+    private javax.swing.JFormattedTextField msRepeatTime;
     private javax.swing.JTextField msgData0;
     private javax.swing.JTextField msgData1;
     private javax.swing.JTextField msgData2;
@@ -877,6 +977,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 (message.type == LogMessage.MessageType.IN)) {
             MonitorMessageTableModel mtm = (MonitorMessageTableModel) monitorTable.getModel();
             mtm.add(message);
+        }
+        
+        if (tm.getRowCount() > 50000)
+        {
+            ClearLogMessageTable(false);
         }
 
     }
