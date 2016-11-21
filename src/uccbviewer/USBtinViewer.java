@@ -533,7 +533,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                             .addComponent(msgRTR, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -542,13 +542,14 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(connectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(logToFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(connectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(logToFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(clearButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(followButton)))
+                                .addComponent(followButton)
+                                .addGap(16, 16, 16)))
                         .addGap(0, 42, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -621,6 +622,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             openmodeComboBox.setEnabled(true);
         } else {
             try {
+                usbtin.clearfifoTX();
                 usbtin.connect((String) serialPort.getSelectedItem());
                 usbtin.openCANChannel(Integer.parseInt((String) bitRate.getSelectedItem()), (USBtin.OpenMode) openmodeComboBox.getSelectedItem());
                 connectionButton.setText("Disconnect");

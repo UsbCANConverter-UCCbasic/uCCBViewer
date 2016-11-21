@@ -72,7 +72,7 @@
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="mainTabbedPane" min="-2" pref="588" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="serialPort" min="-2" pref="111" max="-2" attributes="0"/>
@@ -81,13 +81,14 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="openmodeComboBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="connectionButton" min="-2" pref="81" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="logToFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="connectionButton" min="-2" pref="97" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="logToFile" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="clearButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="followButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
