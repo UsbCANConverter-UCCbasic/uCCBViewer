@@ -23,6 +23,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.awt.Color;
 import uCCBlib.*;
 
 import javax.swing.*;
@@ -58,7 +59,7 @@ import javax.swing.text.NumberFormatter;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "1.2";
+    protected final String version = "1.3";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -264,6 +265,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jSeparator1 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         sendFilters = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         logToFile = new javax.swing.JButton();
         cbRepeat = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -417,7 +419,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
-        sendFilters.setText("send");
+        sendFilters.setText("Add Filter");
         sendFilters.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendFiltersActionPerformed(evt);
@@ -436,10 +438,12 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(195, Short.MAX_VALUE)
+                .addContainerGap(205, Short.MAX_VALUE)
                 .addComponent(sendFilters)
-                .addGap(21, 21, 21))
+                .addContainerGap())
         );
+
+        jLabel2.setText("To add extended filter type more digits ex. 00002 to add extendet 2.");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -453,8 +457,13 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(270, 270, 270))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -466,7 +475,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         filterScrollPane.setViewportView(jPanel1);
@@ -755,6 +766,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private void sendFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendFiltersActionPerformed
             
             int fs = 0;
+            int tmp_ex = 0;
             for (int i = 0; i != filterTextFields.length; i++)
              {
                 if (filterCheckBoxs[i].isSelected())
@@ -763,7 +775,17 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     try {
                         fs ++;
                         Thread.sleep(50);
-                        usbtin.writeFilter(new uCCBlib.FilterChain(i,i,1,1,1,0,filter,0,0,filter,0,0));   
+                        
+                        if ((filter > 0x7FF) || (filterTextFields[i].getText().length() > 4))
+                        {
+                            tmp_ex = 1;
+                            filterTextFields[i].setBackground(Color.GRAY);
+                        } else 
+                        {
+                            tmp_ex = 0;
+                            filterTextFields[i].setBackground(Color.white);
+                        }
+                        usbtin.writeFilter(new uCCBlib.FilterChain(i,i,1,1,1,0,filter,tmp_ex,0,filter,tmp_ex,0));   
                         
                         if (filelogging == true) 
                         {
@@ -920,6 +942,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JCheckBox filtersEnabled;
     private javax.swing.JToggleButton followButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
