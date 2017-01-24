@@ -2,7 +2,8 @@
 UCCBViewer is java software project for monitoring filtering and sending CAN frames.
 Program works with UsbCANConverterBasic. This project uses java UCCBlib for comunication.
 #Build 
-Whole project can be imported to netbeans.
+Whole project can be imported to netbeans. 
+To merge output to one file, change all lib jar to zip. Copy all expect META-INF. Extract uCCBViewer.zip. Remove Class-Path and XComment lines from MANIFEST.MF from META-INF folder. Zip it. Rename to jar.  
 #Usage
 Program runs on Windows,Linux,MacOS. 
 #License
