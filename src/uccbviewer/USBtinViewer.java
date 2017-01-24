@@ -288,7 +288,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         });
 
         bitRate.setEditable(true);
-        bitRate.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10000", "20000", "50000", "100000", "125000", "250000", "500000", "800000", "1000000" }));
+        bitRate.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "100000", "125000", "250000", "500000", "800000", "1000000" }));
         bitRate.setToolTipText("Baudrate");
 
         connectionButton.setText("Connect");
