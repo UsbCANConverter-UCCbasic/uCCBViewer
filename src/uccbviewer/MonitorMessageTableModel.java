@@ -48,6 +48,7 @@ public class MonitorMessageTableModel implements TableModel {
     /** List of log messages to view */
     private final TreeMap<Integer, MonitorMessage> messages = new TreeMap<Integer, MonitorMessage>();
 
+    public boolean hexDispaly = true;
     /**
      * Standard constructor
      */
@@ -195,11 +196,17 @@ public class MonitorMessageTableModel implements TableModel {
                 return icons[logmessage.getType().ordinal()];
 
             case 3:
-                if (canmsg.isExtended()) {
-                    return String.format("%08xh", canmsg.getId());
-                } else {
-                    return String.format("%03xh", canmsg.getId());
-                }
+                    if (canmsg.isExtended()) {
+                        if (this.hexDispaly == true) 
+                            return String.format("%08xh", canmsg.getId());
+                        else
+                            return String.format("%09d", canmsg.getId());
+                    } else {
+                        if (this.hexDispaly == true)
+                            return String.format("%03xh", canmsg.getId());
+                        else
+                            return String.format("%04d", canmsg.getId());
+                    }
 
             case 4:
                 return canmsg.getData().length;
@@ -216,7 +223,15 @@ public class MonitorMessageTableModel implements TableModel {
                     if (i > 0) {
                         s = s.concat(" ");
                     }
-                    s = s.concat(String.format("%02x", data[i]));
+                    if (this.hexDispaly == true)
+                        s = s.concat(String.format("%02x", data[i]));
+                    else
+                    {
+                        if (data[i] < 0)
+                            s = s.concat(String.format("%03d", 256 + data[i]));
+                        else 
+                            s = s.concat(String.format("%03d", data[i]));
+                    }
                 }
 
                 return s;

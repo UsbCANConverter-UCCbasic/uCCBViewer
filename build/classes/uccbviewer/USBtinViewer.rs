@@ -2,6 +2,7 @@ USBtinViewer$16
 USBtinViewer$17
 USBtinViewer$14
 USBtinViewer$15
+USBtinViewer$18
 USBtinViewer$6
 USBtinViewer$5
 USBtinViewer$8
