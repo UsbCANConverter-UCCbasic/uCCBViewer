@@ -170,13 +170,14 @@
       <Properties>
         <Property name="editable" type="boolean" value="true"/>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="6">
+          <StringArray count="7">
             <StringItem index="0" value="100000"/>
             <StringItem index="1" value="125000"/>
             <StringItem index="2" value="250000"/>
             <StringItem index="3" value="500000"/>
             <StringItem index="4" value="800000"/>
             <StringItem index="5" value="1000000"/>
+            <StringItem index="6" value="83300"/>
           </StringArray>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Baudrate"/>
@@ -212,6 +213,9 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Follow"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="followButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="openmodeComboBox">
       <Properties>
@@ -236,6 +240,7 @@
       <Properties>
         <Property name="columns" type="int" value="8"/>
         <Property name="text" type="java.lang.String" value="001"/>
+        <Property name="toolTipText" type="java.lang.String" value="Id frame"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JSpinner" name="msgLength">
@@ -246,6 +251,7 @@
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="0" maximum="8" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Frame length"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="msgLengthStateChanged"/>
@@ -313,6 +319,7 @@
           <Font name="Dialog" size="12" style="0"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Ext"/>
+        <Property name="toolTipText" type="java.lang.String" value="Extended frame"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="msgExtActionPerformed"/>
@@ -324,6 +331,7 @@
           <Font name="Dialog" size="12" style="0"/>
         </Property>
         <Property name="text" type="java.lang.String" value="RTR"/>
+        <Property name="toolTipText" type="java.lang.String" value="Retransmision frame"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="msgRTRActionPerformed"/>
@@ -331,6 +339,7 @@
     </Component>
     <Container class="javax.swing.JTabbedPane" name="mainTabbedPane">
       <Properties>
+        <Property name="toolTipText" type="java.lang.String" value="Set CAN filters"/>
         <Property name="name" type="java.lang.String" value="mainTabbedPane" noResource="true"/>
       </Properties>
       <AccessibilityProperties>
@@ -519,6 +528,7 @@
     <Component class="javax.swing.JCheckBox" name="cbRepeat">
       <Properties>
         <Property name="text" type="java.lang.String" value="Repeat"/>
+        <Property name="toolTipText" type="java.lang.String" value="Check this to enable contionous frame sending with set interval"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
@@ -536,6 +546,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButton2">
       <Properties>
+        <Property name="toolTipText" type="java.lang.String" value="Change display format"/>
         <Property name="label" type="java.lang.String" value="HEX"/>
       </Properties>
       <Events>
@@ -545,6 +556,7 @@
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
         <Property name="text" type="java.lang.String" value="SLCAN"/>
+        <Property name="toolTipText" type="java.lang.String" value="Change file loging format"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>

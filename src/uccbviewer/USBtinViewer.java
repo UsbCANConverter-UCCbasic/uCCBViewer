@@ -59,7 +59,7 @@ import javax.swing.text.NumberFormatter;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "1.4";
+    protected final String version = "1.5";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -290,7 +290,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         });
 
         bitRate.setEditable(true);
-        bitRate.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "100000", "125000", "250000", "500000", "800000", "1000000" }));
+        bitRate.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "100000", "125000", "250000", "500000", "800000", "1000000", "83300" }));
         bitRate.setToolTipText("Baudrate");
 
         connectionButton.setText("Connect");
@@ -317,6 +317,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         followButton.setSelected(true);
         followButton.setText("Follow");
+        followButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                followButtonActionPerformed(evt);
+            }
+        });
 
         openmodeComboBox.setModel(new DefaultComboBoxModel(USBtin.OpenMode.values()));
         openmodeComboBox.setToolTipText("Mode");
@@ -335,9 +340,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         msgId.setColumns(8);
         msgId.setText("001");
+        msgId.setToolTipText("Id frame");
 
         msgLength.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgLength.setModel(new javax.swing.SpinnerNumberModel(0, 0, 8, 1));
+        msgLength.setToolTipText("Frame length");
         msgLength.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 msgLengthStateChanged(evt);
@@ -378,6 +385,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         msgExt.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgExt.setText("Ext");
+        msgExt.setToolTipText("Extended frame");
         msgExt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 msgExtActionPerformed(evt);
@@ -386,12 +394,14 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         msgRTR.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgRTR.setText("RTR");
+        msgRTR.setToolTipText("Retransmision frame");
         msgRTR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 msgRTRActionPerformed(evt);
             }
         });
 
+        mainTabbedPane.setToolTipText("Set CAN filters");
         mainTabbedPane.setName("mainTabbedPane"); // NOI18N
 
         logScrollPane.setName("logTable"); // NOI18N
@@ -495,12 +505,14 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         });
 
         cbRepeat.setText("Repeat");
+        cbRepeat.setToolTipText("Check this to enable contionous frame sending with set interval");
 
         jLabel1.setText("ms");
 
         msRepeatTime.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         msRepeatTime.setText("1000");
 
+        jButton2.setToolTipText("Change display format");
         jButton2.setLabel("HEX");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -509,6 +521,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         });
 
         jButton1.setText("SLCAN");
+        jButton1.setToolTipText("Change file loging format");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -920,6 +933,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void followButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_followButtonActionPerformed
 
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
