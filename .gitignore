@@ -14,3 +14,5 @@ hs_err_pid*
 /dist/
 *.log
 nbproject/private/private.properties
+build/
+.rs
