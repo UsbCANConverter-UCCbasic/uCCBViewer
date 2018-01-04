@@ -409,6 +409,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
+        mainTabbedPane.setToolTipText("");
+        mainTabbedPane.setEnabled(false);
         mainTabbedPane.setName("mainTabbedPane"); // NOI18N
 
         logScrollPane.setName("logTable"); // NOI18N
@@ -514,9 +516,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         jLabel3.setText("ID");
 
-        jLabel4.setText("Data");
+        jLabel4.setText("LEN/Data");
 
-        jLabel5.setText("Header only");
+        jLabel5.setText("RTR");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -529,11 +531,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jLabel3)
-                .addGap(48, 48, 48)
+                .addGap(31, 31, 31)
                 .addComponent(jLabel4)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel5)
-                .addContainerGap(368, Short.MAX_VALUE))
+                .addContainerGap(386, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -729,6 +731,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             try {
                 usbtin.closeCANChannel();
                 usbtin.disconnect();
+                mainTabbedPane.setEnabled(false);
                 log("Disconnected", LogMessage.MessageType.INFO);
             } catch (USBtinException e) {
                 log(e.getMessage(), LogMessage.MessageType.ERROR);
@@ -754,7 +757,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 sendButton.setEnabled(true);
                 openmodeComboBox.setEnabled(false);
                 log("Connected to Device (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
-
+                mainTabbedPane.setEnabled(true);
                 // switch to LIN  //ll
                 if (usbtin.getSerialNumber().equals("0xFF") == true)
                     this.Device_Type = Device_Type.LIN_DEVICE;
@@ -1030,42 +1033,60 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         int fs = 0;
-        for (int i = 0; i != LINMaster_TF_DATA.length; i++)
-        {
-            try {
-                String s;
-                fs ++;
-                
-                if (LINMaster_TF_ID[i].getText().length() > 0)
-                {
-                    Thread.sleep(50);
-                    s = "T" + LINMaster_TF_ID[i].getText().toCharArray()[0]  + LINMaster_TF_ID[i].getText().toCharArray()[1]; 
+        try {
+            for (int i = 0; i != LINMaster_TF_DATA.length; i++)
+            {
 
-                    s += LINMaster_TF_DATA[i].getText().length();
-
-                    if (LINMaster_TF_FRAME_TYPE[i].isSelected() == true)  s += "1"; else s += "0";
-
-                    for (int dig = 0;  dig < (LINMaster_TF_DATA[i].getText().length()); dig += 2)
+                    String s;
+                    fs ++;
+                    if (LINMaster_TF_ID[i].getText().length() > 0)
                     {
-                        s += LINMaster_TF_DATA[i].getText().toCharArray()[dig];
-                        s += LINMaster_TF_DATA[i].getText().toCharArray()[dig + 1];
+                        // header
+                        if (LINMaster_TF_FRAME_TYPE[i].isSelected() == true)                    
+                            s = "r0";
+                        else
+                            s = "t0";
+                        // id
+                        s += LINMaster_TF_ID[i].getText().toCharArray()[0];
+                        s += LINMaster_TF_ID[i].getText().toCharArray()[1];
+                     
+                        // timing
+//                        s+= "15"; // jitter
+//                        // timing according foruma  tFrame_Max = 1.4 • tFrame_Nom = [1.4 • (n •10 + 44)] • tBit      tBit = 52.1µs
+//                        double tFrame_Max_ms =  1.4 * (byteNumber * 10 + 44) * 0.052;
+//                        if (Integer.toHexString((int)Math.floor(tFrame_Max_ms)).length() == 1)
+//                            s += "0";
+//                        s+= Integer.toHexString((int)Math.floor(tFrame_Max_ms));
+                        // lenght
+                        if (LINMaster_TF_FRAME_TYPE[i].isSelected() == false)
+                        {
+                            int byteNumber = LINMaster_TF_DATA[i].getText().length() / 2;
+                            s += byteNumber;
+                            s += LINMaster_TF_DATA[i].getText();
+                            if (LINMaster_TF_DATA[i].getText().length() % 2 == 1) s += "0";
+                        } else 
+                        {
+                            s += LINMaster_TF_DATA[i].getText();
+                        }
+
+//                        usbtin.noRespTrasmit(s);
+                        CANMessage canmsg = new CANMessage(s);
+                        send(canmsg);
+                        Thread.sleep(50);
+//                      usbtin.noRespTrasmit(s);
                     }
 
-                    s+= "20";
-                    s+= "20";
-
-                    usbtin.transmit(s);
-                }
+                    if (filelogging == true) 
+                    {
+                        fileLog.println(String.valueOf(System.currentTimeMillis()) + ": M " + filterTextFields[i].getText());
+                    }
+            }
+            Thread.sleep(50);
+            CANMessage canmsg = new CANMessage("r0FF0"); // start sending
+            send(canmsg);
+        } catch (InterruptedException ex) {
                 
-                if (filelogging == true) 
-                {
-                    fileLog.println(String.valueOf(System.currentTimeMillis()) + ": M " + filterTextFields[i].getText());
-                }
-            } catch (InterruptedException | SerialPortException | SerialPortTimeoutException ex) {
-                Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
-                log(ex.getMessage(), LogMessage.MessageType.ERROR);
-            } 
-        }
+        } 
         if (fs > 0)
             log(new LogMessage(null, fs+" LIN Master table send OK", LogMessage.MessageType.INFO, System.currentTimeMillis() - baseTimestamp));
         else 
@@ -1112,7 +1133,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         LINMaster_TF_DATA = new JTextField[n];
         LINMaster_TF_FRAME_TYPE = new JCheckBox[n];
         
-        int oX = 30;
+        int oX = 10;
         int oY = 40;
         
         int rC = 5;
@@ -1125,13 +1146,13 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             LINMaster_TF_DATA[i] = new JTextField();
             LINMaster_TF_FRAME_TYPE[i] = new JCheckBox();
             
-            LINMaster_TF_DATA[i].setToolTipText("Data");
+            LINMaster_TF_DATA[i].setToolTipText("LEN for RTR / Data for Transmission frame");
             LINMaster_TF_ID[i].setToolTipText("ID");
-            LINMaster_TF_FRAME_TYPE[i].setToolTipText("if checked heder is only send");
+            LINMaster_TF_FRAME_TYPE[i].setToolTipText("if checked Recive frame is send");
             
             LINMaster_TF_ID[i].setBounds(oX  + 190 * (int)(i/rC) , oY + 50 *(i%rC), 40, 25);
-            LINMaster_TF_DATA[i].setBounds((oX + 45 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 80, 25);
-            LINMaster_TF_FRAME_TYPE[i].setBounds((oX + 130 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 80, 25);
+            LINMaster_TF_DATA[i].setBounds((oX + 45 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 100, 25);
+            LINMaster_TF_FRAME_TYPE[i].setBounds((oX + 150 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 80, 25);
             
             p.add(LINMaster_TF_ID[i]);
             p.add(LINMaster_TF_DATA[i]);
