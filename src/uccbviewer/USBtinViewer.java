@@ -274,6 +274,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
         logToFile = new javax.swing.JButton();
         cbRepeat = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -520,12 +521,21 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         jLabel5.setText("RTR");
 
+        jButton4.setText("Clear Table");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -546,7 +556,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
-                .addComponent(jButton3)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addGap(21, 21, 21))
         );
 
@@ -1082,7 +1094,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     }
             }
             Thread.sleep(50);
-            CANMessage canmsg = new CANMessage("r0FF0"); // start sending
+            CANMessage canmsg = new CANMessage("r1FF0"); // start sending
             send(canmsg);
         } catch (InterruptedException ex) {
                 
@@ -1092,6 +1104,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         else 
             log(new LogMessage(null, "LIN Master table send failed", LogMessage.MessageType.ERROR, System.currentTimeMillis() - baseTimestamp));
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        CANMessage canmsg = new CANMessage("r2FF0"); // start sending
+        send(canmsg);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
@@ -1211,6 +1228,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
