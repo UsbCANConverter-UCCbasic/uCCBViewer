@@ -275,6 +275,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         logToFile = new javax.swing.JButton();
         cbRepeat = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -410,7 +411,6 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
-        mainTabbedPane.setToolTipText("");
         mainTabbedPane.setEnabled(false);
         mainTabbedPane.setName("mainTabbedPane"); // NOI18N
 
@@ -528,12 +528,21 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
+        jButton5.setText("SCAN");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
@@ -558,7 +567,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(jButton4)
+                    .addComponent(jButton5))
                 .addGap(21, 21, 21))
         );
 
@@ -740,6 +750,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private void connectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectionButtonActionPerformed
 
         if (connectionButton.getText().equals("Disconnect")) {
+            this.jButton5.setText("SCAN");
+            tim.stop();     
             try {
                 usbtin.closeCANChannel();
                 usbtin.disconnect();
@@ -1046,9 +1058,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         int fs = 0;
         try {
+            
+            CANMessage canmsg = new CANMessage("r2FF0"); // reset table
+            Thread.sleep(50);
             for (int i = 0; i != LINMaster_TF_DATA.length; i++)
             {
-
                     String s;
                     fs ++;
                     if (LINMaster_TF_ID[i].getText().length() > 0)
@@ -1059,8 +1073,15 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                         else
                             s = "t0";
                         // id
-                        s += LINMaster_TF_ID[i].getText().toCharArray()[0];
-                        s += LINMaster_TF_ID[i].getText().toCharArray()[1];
+                        if (LINMaster_TF_ID[i].getText().length() == 1)
+                        {
+                            s += '0';
+                            s += LINMaster_TF_ID[i].getText().toCharArray()[0];
+                        } else
+                        {   
+                            s += LINMaster_TF_ID[i].getText().toCharArray()[0];
+                            s += LINMaster_TF_ID[i].getText().toCharArray()[1];
+                        }
                      
                         // timing
 //                        s+= "15"; // jitter
@@ -1082,7 +1103,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                         }
 
 //                        usbtin.noRespTrasmit(s);
-                        CANMessage canmsg = new CANMessage(s);
+                        canmsg = new CANMessage(s);
                         send(canmsg);
                         Thread.sleep(50);
 //                      usbtin.noRespTrasmit(s);
@@ -1094,7 +1115,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     }
             }
             Thread.sleep(50);
-            CANMessage canmsg = new CANMessage("r1FF0"); // start sending
+            canmsg = new CANMessage("r1FF0"); // start sending    
             send(canmsg);
         } catch (InterruptedException ex) {
                 
@@ -1106,9 +1127,54 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        CANMessage canmsg = new CANMessage("r2FF0"); // start sending
+        CANMessage canmsg = new CANMessage("r2FF0"); // reset table
         send(canmsg);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    int id_scan = 0;
+    Timer tim = new Timer (1000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        try {
+            CANMessage canmsg = new CANMessage("r2FF0"); // reset table
+            send(canmsg);
+            Thread.sleep(50);
+            
+            canmsg = new CANMessage("r0" + String.format("%02x", id_scan ) + String.format("%01x", 8)); 
+            send(canmsg);
+            Thread.sleep(50);
+            
+            canmsg = new CANMessage("r1FF0"); // enable sendig
+            send(canmsg);
+            
+            if (id_scan >= 0x3F)
+            {
+                id_scan = 0;
+                tim.stop();
+                jButton5.setText("SCAN");
+            }
+            id_scan ++;
+                
+         } catch (InterruptedException ex) {
+                
+        }            
+
+        }
+    });
+    
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        id_scan = 0;
+
+        if ("SCAN".equals(this.jButton5.getText()))
+        {
+            this.jButton5.setText("SCAN OFF");
+            tim.start();
+        } else
+        {
+            this.jButton5.setText("SCAN");
+            tim.stop();           
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
@@ -1169,7 +1235,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             
             LINMaster_TF_ID[i].setBounds(oX  + 190 * (int)(i/rC) , oY + 50 *(i%rC), 40, 25);
             LINMaster_TF_DATA[i].setBounds((oX + 45 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 100, 25);
-            LINMaster_TF_FRAME_TYPE[i].setBounds((oX + 150 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 80, 25);
+            LINMaster_TF_FRAME_TYPE[i].setBounds((oX + 150 )+ 190 * (int)(i/rC) ,  oY + 50 *(i%rC), 25, 25);
             
             p.add(LINMaster_TF_ID[i]);
             p.add(LINMaster_TF_DATA[i]);
@@ -1229,6 +1295,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

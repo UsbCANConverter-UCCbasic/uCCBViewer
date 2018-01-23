@@ -22,5 +22,8 @@ USBtinViewer$15
 USBtinViewer$14
 USBtinViewer$Device_Type
 USBtinViewer
+USBtinViewer$24
+USBtinViewer$23
+USBtinViewer$22
 USBtinViewer$21
 USBtinViewer$20
