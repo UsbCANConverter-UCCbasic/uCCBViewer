@@ -1,2 +1,0 @@
-LogMessage$MessageType
-LogMessage

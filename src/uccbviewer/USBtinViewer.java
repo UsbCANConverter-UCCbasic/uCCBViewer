@@ -83,7 +83,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         initComponents();
         
         CreateFiltersArray(this.jPanel2,13);
-        CreateLINMasterArray(this.jPanel3, 15);
+        CreateLINMasterArray(this.LINMasterTable, 15);
         
         setTitle(getTitle() + " " + version);
         setIconImage(new ImageIcon(getClass().getResource("/res/icons/usbtinviewer.png")).getImage());
@@ -92,6 +92,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         monitorTable.setModel(new MonitorMessageTableModel());
         // initialize message payload input fields and add listeners
         msgDataFields = new JTextField[]{msgData0, msgData1, msgData2, msgData3, msgData4, msgData5, msgData6, msgData7};
+        
+        mainTabbedPane.remove(LINMasterTable);
+        
         DocumentListener msgListener = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) {
@@ -269,7 +272,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jPanel2 = new javax.swing.JPanel();
         sendFilters = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        LINMasterTable = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -282,6 +285,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         msRepeatTime = new javax.swing.JFormattedTextField();
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        btnSWCANLIN = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("UCCBViewer");
@@ -506,7 +510,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         mainTabbedPane.addTab("Filter", filterScrollPane);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        LINMasterTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jButton3.setText("Send Table");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -535,11 +539,11 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout LINMasterTableLayout = new javax.swing.GroupLayout(LINMasterTable);
+        LINMasterTable.setLayout(LINMasterTableLayout);
+        LINMasterTableLayout.setHorizontalGroup(
+            LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LINMasterTableLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -547,32 +551,32 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addContainerGap())
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(LINMasterTableLayout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jLabel3)
                 .addGap(31, 31, 31)
                 .addComponent(jLabel4)
                 .addGap(35, 35, 35)
                 .addComponent(jLabel5)
-                .addContainerGap(386, Short.MAX_VALUE))
+                .addContainerGap(419, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        LINMasterTableLayout.setVerticalGroup(
+            LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LINMasterTableLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
                     .addComponent(jButton5))
                 .addGap(21, 21, 21))
         );
 
-        mainTabbedPane.addTab("LIN Master Table", jPanel3);
+        mainTabbedPane.addTab("LIN Master Table", LINMasterTable);
 
         logToFile.setText("LogToFile");
         logToFile.setToolTipText("Log frames to file placed in running directory, file name is timestamp.");
@@ -606,6 +610,14 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             }
         });
 
+        btnSWCANLIN.setText("LIN");
+        btnSWCANLIN.setActionCommand("");
+        btnSWCANLIN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSWCANLINActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -613,6 +625,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(mainTabbedPane)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -651,9 +666,6 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                             .addComponent(msgRTR, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -669,30 +681,35 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                             .addComponent(logToFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(followButton))
-                        .addGap(86, 86, 86))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(followButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSWCANLIN, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(connectionButton)
-                    .addComponent(clearButton)
-                    .addComponent(logToFile))
-                .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1)
-                    .addComponent(followButton)
-                    .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(connectionButton)
+                            .addComponent(clearButton)
+                            .addComponent(logToFile))
+                        .addGap(1, 1, 1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2)
+                            .addComponent(jButton1)
+                            .addComponent(followButton)
+                            .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btnSWCANLIN, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(msgId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(msgLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -764,7 +781,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             bitRate.setEnabled(true);
             serialPort.setEnabled(true);
             sendButton.setEnabled(false);
-            
+            btnSWCANLIN.setEnabled(true);
             sendTimer.stop();
             sendButton.setText("Send");
             sendingIsActive = false;
@@ -779,6 +796,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 bitRate.setEnabled(false);
                 serialPort.setEnabled(false);
                 sendButton.setEnabled(true);
+                btnSWCANLIN.setEnabled(false);
                 openmodeComboBox.setEnabled(false);
                 log("Connected to Device (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
                 mainTabbedPane.setEnabled(true);
@@ -788,13 +806,13 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 else 
                    this.Device_Type =  Device_Type.CAN_DEVICE;
         
-                if (this.Device_Type == Device_Type.LIN_DEVICE)
-                {
-                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER", "MONITOR" }));
-                } else // CAN_DEVICE
-                {
-                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ACTIVE", "LOOPBACK", "LISTENONLY" }));
-                }
+//                if (this.Device_Type == Device_Type.LIN_DEVICE)
+//                {
+//                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER", "MONITOR" }));
+//                } else // CAN_DEVICE
+//                {
+//                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ACTIVE", "LOOPBACK", "LISTENONLY" }));
+//                }
                 
                 if (baseTimestamp == 0) {
                     baseTimestamp = System.currentTimeMillis();
@@ -1176,6 +1194,30 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    boolean selCAN = true;
+    private void btnSWCANLINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSWCANLINActionPerformed
+        // TODO add your handling code here:
+        if (selCAN)
+        {
+            mainTabbedPane.add(LINMasterTable,"LIN Master Table");
+            openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER","MONITOR" }));
+            
+            mainTabbedPane.remove(filterScrollPane);
+            bitRate.setVisible(false);
+            
+
+            selCAN = false;
+        } else {
+            mainTabbedPane.remove(LINMasterTable);
+            
+            mainTabbedPane.add(filterScrollPane, "Filter");
+            openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ACTIVE", "LOOPBACK", "LISTENONLY" }));
+            bitRate.setVisible(true);
+            
+            selCAN = true;
+        }
+    }//GEN-LAST:event_btnSWCANLINActionPerformed
+
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
     void CreateFiltersArray(JPanel p, int n)
@@ -1220,9 +1262,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         int oY = 40;
         
         int rC = 5;
-                
-        
-        
+     
         for (int i =0; i != n; i++)
         {
             LINMaster_TF_ID[i] = new JTextField();
@@ -1284,7 +1324,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel LINMasterTable;
     private javax.swing.JComboBox bitRate;
+    private javax.swing.JToggleButton btnSWCANLIN;
     private javax.swing.JCheckBox cbRepeat;
     private javax.swing.JButton clearButton;
     private javax.swing.JButton connectionButton;
@@ -1303,7 +1345,6 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTable logTable;
