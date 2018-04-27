@@ -594,18 +594,19 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LINMasterTableLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
+                .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(jLabel11)
+                        .addComponent(jLabel10))
                     .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel8)
                         .addComponent(jLabel7)
-                        .addComponent(jLabel6)
-                        .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel10))))
+                        .addComponent(jLabel6))
+                    .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
                 .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
@@ -833,33 +834,27 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 connectionButton.setText("Disconnect");
                 bitRate.setEnabled(false);
                 serialPort.setEnabled(false);
-                if (openmodeComboBox.getSelectedItem().toString().equalsIgnoreCase("Master"))
+                if (this.Device_Type == tDevice_Type.LIN_DEVICE)
                 {
+                    if (openmodeComboBox.getSelectedItem().toString().equalsIgnoreCase("Master"))
+                    {
+                        mainTabbedPane.setEnabledAt(2, true);
+                    }
+                    else 
+                    {
+                        mainTabbedPane.setEnabledAt(2, false);
+                        sendButton.setEnabled(true);
+                    }
+                } else
+                {
+                      sendButton.setEnabled(true);
                     mainTabbedPane.setEnabledAt(2, true);
-                }
-                else 
-                {
-                    mainTabbedPane.setEnabledAt(2, false);
-                    sendButton.setEnabled(true);
-                }
-                    
+                }   
                 btnSWCANLIN.setEnabled(false);
                 openmodeComboBox.setEnabled(false);
                 log("Connected to Device (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
                 mainTabbedPane.setEnabled(true);
-                // switch to LIN  //ll
-                if (usbtin.getSerialNumber().equals("0xFF") == true)
-                    this.Device_Type = Device_Type.LIN_DEVICE;
-                else 
-                   this.Device_Type =  Device_Type.CAN_DEVICE;
-        
-//                if (this.Device_Type == Device_Type.LIN_DEVICE)
-//                {
-//                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER", "MONITOR" }));
-//                } else // CAN_DEVICE
-//                {
-//                    openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ACTIVE", "LOOPBACK", "LISTENONLY" }));
-//                }
+                
                 
                 if (baseTimestamp == 0) {
                     baseTimestamp = System.currentTimeMillis();
@@ -1246,6 +1241,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         // TODO add your handling code here:
         if (selCAN)
         {
+                this.Device_Type = tDevice_Type.LIN_DEVICE;
             mainTabbedPane.add(LINMasterTable,"LIN Master Table");
             openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER","MONITOR" }));
             
@@ -1258,6 +1254,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
             selCAN = false;
         } else {
+                this.Device_Type = tDevice_Type.CAN_DEVICE;
             mainTabbedPane.remove(LINMasterTable);
             
             mainTabbedPane.add(filterScrollPane, "Filter");
