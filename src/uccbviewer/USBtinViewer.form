@@ -81,6 +81,10 @@
                               <Component id="msgData6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="msgData7" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="bitRate1" min="-2" pref="67" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="msgExt" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -145,6 +149,8 @@
                   <Component id="msgData7" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="msgExt" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="msgRTR" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="bitRate1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -534,8 +540,8 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="LIN Master Table">
-                <Property name="tabTitle" type="java.lang.String" value="LIN Master Table"/>
+              <JTabbedPaneConstraints tabName="LIN Table">
+                <Property name="tabTitle" type="java.lang.String" value="LIN Table"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -693,6 +699,23 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSWCANLINActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel6">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="LINBaudRate"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="bitRate1">
+      <Properties>
+        <Property name="editable" type="boolean" value="true"/>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="2">
+            <StringItem index="0" value="19200"/>
+            <StringItem index="1" value="9600"/>
+          </StringArray>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Baudrate"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

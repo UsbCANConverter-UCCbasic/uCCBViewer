@@ -63,7 +63,7 @@ import jssc.SerialPortTimeoutException;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "2.1";
+    protected final String version = "2.3";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -94,6 +94,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         monitorTable.setModel(new MonitorMessageTableModel());
         // initialize message payload input fields and add listeners
         msgDataFields = new JTextField[]{msgData0, msgData1, msgData2, msgData3, msgData4, msgData5, msgData6, msgData7};
+        
+        
+        bitRate1.setVisible(false);            
+        jLabel6.setVisible(false);
         
         mainTabbedPane.remove(LINMasterTable);
         
@@ -289,6 +293,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         btnSWCANLIN = new javax.swing.JToggleButton();
+        jLabel6 = new javax.swing.JLabel();
+        bitRate1 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("UCCBViewer");
@@ -586,7 +592,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addGap(21, 21, 21))
         );
 
-        mainTabbedPane.addTab("LIN Master Table", LINMasterTable);
+        mainTabbedPane.addTab("LIN Table", LINMasterTable);
 
         logToFile.setText("LogToFile");
         logToFile.setToolTipText("Log frames to file placed in running directory, file name is timestamp.");
@@ -627,6 +633,12 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 btnSWCANLINActionPerformed(evt);
             }
         });
+
+        jLabel6.setText("LINBaudRate");
+
+        bitRate1.setEditable(true);
+        bitRate1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "19200", "9600" }));
+        bitRate1.setToolTipText("Baudrate");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -682,6 +694,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                                 .addComponent(msgData6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(msgData7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(bitRate1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(msgExt))
                             .addGroup(layout.createSequentialGroup()
@@ -732,7 +748,9 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     .addComponent(msgData6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(msgData7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(msgExt)
-                    .addComponent(msgRTR))
+                    .addComponent(msgRTR)
+                    .addComponent(jLabel6)
+                    .addComponent(bitRate1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sendMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -764,6 +782,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             case "MONITOR":
                 return USBtin.OpenMode.LOOPBACK;
             case "LISTENONLY":
+            case "SLAVE":
                 return USBtin.OpenMode.LISTENONLY;
             default:
                 return USBtin.OpenMode.LOOPBACK;
@@ -801,13 +820,28 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             try {
                 usbtin.clearfifoTX();
                 usbtin.connect((String) serialPort.getSelectedItem());
-                usbtin.openCANChannel(Integer.parseInt((String) bitRate.getSelectedItem()), connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));
+                if (this.Device_Type == tDevice_Type.LIN_DEVICE){
+                    int gg = Integer.parseInt((String) bitRate1.getSelectedItem());
+                    if (gg == 19200)
+                    {
+                         gg = 100000;
+                    } else 
+                    {
+                        gg = 50000;
+                    }
+                    usbtin.openCANChannel(gg, connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));
+                }                
+                else {
+                    usbtin.openCANChannel(Integer.parseInt((String) bitRate.getSelectedItem()), connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));
+                }
+                
                 connectionButton.setText("Disconnect");
                 bitRate.setEnabled(false);
                 serialPort.setEnabled(false);
                 if (this.Device_Type == tDevice_Type.LIN_DEVICE)
-                {
-                    if (openmodeComboBox.getSelectedItem().toString().equalsIgnoreCase("Master"))
+                {                    
+                    if (openmodeComboBox.getSelectedItem().toString().equalsIgnoreCase("Master") ||
+                        openmodeComboBox.getSelectedItem().toString().equalsIgnoreCase("Slave"))
                     {
                         mainTabbedPane.setEnabledAt(2, true);
                     }
@@ -832,7 +866,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 }
             } catch (USBtinException e) {
                 log(e.getMessage(), LogMessage.MessageType.ERROR);
-            }
+            } 
         }
     }//GEN-LAST:event_connectionButtonActionPerformed
 
@@ -1123,13 +1157,17 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
         if (selCAN)
         {
                 this.Device_Type = tDevice_Type.LIN_DEVICE;
-            mainTabbedPane.add(LINMasterTable,"LIN Master Table");
-            openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER","MONITOR" }));
+            mainTabbedPane.add(LINMasterTable,"LIN Schedule Table");
+            openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MASTER","MONITOR", "SLAVE"}));
             
             mainTabbedPane.remove(filterScrollPane);
             bitRate.setVisible(false);
             
             msgExt.setVisible(false);
+            
+              bitRate1.setVisible(true);            
+              jLabel6.setVisible(true);
+            
             msgRTR.setText("No data");
             
 
@@ -1142,25 +1180,15 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             openmodeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ACTIVE", "LOOPBACK", "LISTENONLY" }));
             bitRate.setVisible(true);
             msgExt.setVisible(true);
+            
+            bitRate1.setVisible(false);            
+            jLabel6.setVisible(false);
+            
             msgRTR.setText("RTR");
             
             selCAN = true;
         }
     }//GEN-LAST:event_btnSWCANLINActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        id_scan = 0;
-
-        if ("SCAN".equals(this.jButton5.getText()))
-        {
-            this.jButton5.setText("SCAN OFF");
-            tim.start();
-        } else
-        {
-            this.jButton5.setText("SCAN");
-            tim.stop();
-        }
-    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         CANMessage canmsg = new CANMessage("r2FF0"); // reset table
@@ -1234,10 +1262,24 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
 
         }
         if (fs > 0)
-        log(new LogMessage(null, fs+" LIN Master table send OK", LogMessage.MessageType.INFO, System.currentTimeMillis() - baseTimestamp));
+        log(new LogMessage(null, fs+" LIN schedule table send OK", LogMessage.MessageType.INFO, System.currentTimeMillis() - baseTimestamp));
         else
-        log(new LogMessage(null, "LIN Master table send failed", LogMessage.MessageType.ERROR, System.currentTimeMillis() - baseTimestamp));
+        log(new LogMessage(null, "LIN schedule table send failed", LogMessage.MessageType.ERROR, System.currentTimeMillis() - baseTimestamp));
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        id_scan = 0;
+
+        if ("SCAN".equals(this.jButton5.getText()))
+        {
+            this.jButton5.setText("SCAN OFF");
+            tim.start();
+        } else
+        {
+            this.jButton5.setText("SCAN");
+            tim.stop();
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     JTextField[] filterTextFields;
     JCheckBox[]  filterCheckBoxs;
@@ -1408,6 +1450,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel LINMasterTable;
     private javax.swing.JComboBox bitRate;
+    private javax.swing.JComboBox bitRate1;
     private javax.swing.JToggleButton btnSWCANLIN;
     private javax.swing.JCheckBox cbRepeat;
     private javax.swing.JButton clearButton;
@@ -1426,6 +1469,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
