@@ -63,7 +63,7 @@ import jssc.SerialPortTimeoutException;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "2.4";
+    protected final String version = "2.5";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
@@ -562,7 +562,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(LINMasterTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(LINMasterTableLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 454, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 466, Short.MAX_VALUE)
                         .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4)
@@ -679,15 +679,17 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                                 .addComponent(msgData6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(msgData7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(bitRate1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addGap(53, 53, 53)
                                 .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bitRate1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(msgExt))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(sendMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jCheckBox1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cbRepeat)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(msRepeatTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -718,9 +720,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                             .addComponent(followButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                             .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnSWCANLIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnSWCANLIN, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(mainTabbedPane)))
         );
@@ -728,23 +728,24 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(connectionButton)
-                        .addComponent(logToFile))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnSWCANLIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(clearButton)))
-                .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1)
-                    .addComponent(followButton)
-                    .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(serialPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bitRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(connectionButton)
+                                .addComponent(logToFile))
+                            .addComponent(clearButton))
+                        .addGap(1, 1, 1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2)
+                            .addComponent(jButton1)
+                            .addComponent(followButton)
+                            .addComponent(openmodeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnSWCANLIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -768,7 +769,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     .addComponent(sendButton)
                     .addComponent(jLabel1)
                     .addComponent(msRepeatTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbRepeat))
+                    .addComponent(cbRepeat)
+                    .addComponent(jCheckBox1))
                 .addContainerGap())
         );
 
@@ -826,6 +828,10 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
             sendButton.setText("Send");
             sendingIsActive = false;
             
+            
+            this.jCheckBox1.setEnabled(true);
+            this.bitRate1.setEnabled(true);
+            
             openmodeComboBox.setEnabled(true);
         } else {
             try {
@@ -840,8 +846,8 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                     {
                         gg = 50000;
                     }
-                    usbtin.openCANChannel(gg, connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));
-                }                
+                    usbtin.openCANChannel(gg, connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));                    
+                }
                 else {
                     usbtin.openCANChannel(Integer.parseInt((String) bitRate.getSelectedItem()), connectionStringToEnum((String)openmodeComboBox.getSelectedItem()));
                 }
@@ -871,13 +877,33 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
                 log("Connected to Device (FW" + usbtin.getFirmwareVersion() + "/HW" + usbtin.getHardwareVersion() + ", SN: " + usbtin.getSerialNumber() + ")", LogMessage.MessageType.INFO);
                 mainTabbedPane.setEnabled(true);
                 
+                this.jCheckBox1.setEnabled(false);
+                this.bitRate1.setEnabled(false);
                 
                 if (baseTimestamp == 0) {
                     baseTimestamp = System.currentTimeMillis();
                 }
+                
+                if (this.Device_Type == tDevice_Type.LIN_DEVICE)
+                {
+                     Thread.sleep(50);
+                       
+                    if (this.jCheckBox1.isSelected()){
+                        CANMessage canmsg = new CANMessage("r3100"); // set checksum to classic
+                        send(canmsg);
+                    }                        
+                    else
+                    {
+                        CANMessage canmsg = new CANMessage("r3000"); // set cecksum to enchanced
+                        send(canmsg);
+                    }
+                }
+                
             } catch (USBtinException e) {
                 log(e.getMessage(), LogMessage.MessageType.ERROR);
-            } 
+            } catch (InterruptedException ex) {
+                Logger.getLogger(USBtinViewer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_connectionButtonActionPerformed
 
@@ -1296,21 +1322,7 @@ public class USBtinViewer extends javax.swing.JFrame implements CANMessageListen
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        if (this.jCheckBox1.isSelected())
-        {
-            try {
-            this.usbtin.transmit("x2");
-            } catch (SerialPortException e) {             
-            } catch (SerialPortTimeoutException e) {               
-            }    
-        } else
-        {
-            try {
-            this.usbtin.transmit("x1");
-            } catch (SerialPortException e) {             
-            } catch (SerialPortTimeoutException e) {               
-            }    
-        }
+       
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     JTextField[] filterTextFields;
