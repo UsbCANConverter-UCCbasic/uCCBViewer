@@ -63,7 +63,7 @@ import jssc.SerialPortTimeoutException;
 public class USBtinViewer extends javax.swing.JFrame implements CANMessageListener {
 
     /** Version string */
-    protected final String version = "2.5";
+    protected final String version = "2.6";
 
     /** USBtin device */
     protected USBtin usbtin = new USBtin();
