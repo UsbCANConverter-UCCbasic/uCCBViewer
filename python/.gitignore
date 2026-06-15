@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.log
+_build_info.py
+
+# PyInstaller build output / build virtualenv
+/build/
+/dist/
+/build-linux/
+/dist-linux/
+/.buildvenv/
