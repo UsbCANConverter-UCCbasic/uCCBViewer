@@ -23,7 +23,7 @@ from .log_message import LogMessage, MessageType
 from .table_models import MonitorModel, format_id, format_data, format_dlc
 from .usbtin import USBtin, USBtinException, OpenMode
 
-VERSION = "2.6"
+VERSION = "2.7"
 
 # Build date/time, baked in by uCCBViewer.spec at build time.  Falls back to
 # "dev" when running straight from source (no _build_info.py present).
@@ -99,6 +99,20 @@ def current_millis():
 def bytes_to_hex(data):
     """Uppercase hex string, matching USBtinViewer.bytesToHex()."""
     return "".join("%02X" % b for b in data)
+
+
+def parse_lin_id(text):
+    """LIN id from a schedule-table cell: hex, any case, optional 0x, 0..3F.
+
+    Raises ValueError for anything else.
+    """
+    text = text.strip().lower()
+    if text.startswith("0x"):
+        text = text[2:]
+    value = int(text, 16)
+    if not 0 <= value <= 0x3F:
+        raise ValueError("LIN id out of range: %s" % text)
+    return value
 
 
 class UCCBViewer(tk.Tk):
@@ -1206,9 +1220,13 @@ class UCCBViewer(tk.Tk):
                 self._file_println("%d: R %s" % (current_millis(), str(canmsg)))
 
         # mirror received payloads back into the matching LIN schedule row
-        id_hex = format(canmsg.get_id(), "x")
+        # (compare numerically: "1", "01", "0x1" all mean id 1)
         for i in range(LIN_ROW_COUNT):
-            if self.lin_id_entries[i].get() == id_hex:
+            try:
+                row_id = parse_lin_id(self.lin_id_entries[i].get())
+            except ValueError:
+                continue
+            if row_id == canmsg.get_id():
                 if not self.lin_frame_vars[i].get():
                     self._set_entry_text(self.lin_data_entries[i],
                                         bytes_to_hex(canmsg.get_data()))
@@ -1477,18 +1495,16 @@ class UCCBViewer(tk.Tk):
 
         rows = 0
         commands = ["r2FF0"]  # reset table
+        i = 0
         try:
             for i in range(LIN_ROW_COUNT):
-                rows += 1
-                id_text = self.lin_id_entries[i].get()
+                id_text = self.lin_id_entries[i].get().strip()
                 if len(id_text) > 0:
+                    rows += 1
                     # header type
                     s = "t0" if self.lin_frame_vars[i].get() else "r0"
-                    # id (padded to 2 hex digits)
-                    if len(id_text) == 1:
-                        s += "0" + id_text[0]
-                    else:
-                        s += id_text[0] + id_text[1]
+                    # id (2 hex digits; "1", "01", "0x1" all accepted)
+                    s += "%02x" % parse_lin_id(id_text)
                     # length / data
                     if self.lin_frame_vars[i].get():
                         byte_number = int(self.lin_len_entries[i].get())
@@ -1503,7 +1519,8 @@ class UCCBViewer(tk.Tk):
                 if self.filelogging:
                     self._file_println("%d: M %s" % (current_millis(), id_text))
         except (ValueError, IndexError):
-            self.log("LIN schedule table send failed", MessageType.ERROR)
+            self.log("LIN schedule table send failed: invalid row %d" % (i + 1),
+                     MessageType.ERROR)
             return
 
         commands.append("r1FF0")  # start sending
